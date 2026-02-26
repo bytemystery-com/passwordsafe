@@ -4,8 +4,8 @@ Website = "https://github.com/bytemystery-com/passwordsafe"
 Icon = "assets/icons/icon.png"
 Name = "PasswordSafe"
 ID = "com.bytemystery.passwordsafe2"
-Version = "0.3.1"
-Build = 100
+Version = "0.3.2"
+Build = 103
 
 [LinuxAndBSD]
 GenericName = "PasswordSafe"

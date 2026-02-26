@@ -3,9 +3,9 @@
 # PasswordSafe
 PasswordSafe is an app runnig on Anroid, Linux and Windows. It stores you passwords in a SQLite database.
 For every entry you give a name (this name is not encrypted and searchable). For every entry you can define fileds (Label and Value) and fill with informations. All this data are stored encrypted.
-For encryption AES-256 in conjunction with agon2 is used. The encryption is done with an random Masterkey which is stored encrypted in the database. For opening the masterkey a user Password is used.
+For encryption AES-256 in conjunction with agon2 is used. The encryption is done with an random masterkey which is stored encrypted in the database. For opening the masterkey a user password is used.
 You can have multiple categories to store entries in it.
-Database can be exported and imported.
+The database can be exported and imported.
 
 PasswordSafe is written in [Go](https://go.dev/) and uses [Fyne](https://fyne.io/) as graphical toolkit.
 
@@ -19,7 +19,7 @@ Then you can add entryies to the categories. Use the green + button bottom left 
 For every entry you can add multiple custom fields. Use the green + button bottom left to add fields.  
 For choosing an icon click on the icon.  
 On the view Page you can copy the conten of a field in the clipboard. For this use short or long tap. You can define which is used on the settings page.  
-You can also yhnage the theme by clicking on the left most icon in the tool bar. Since the original version of the app (15 years ago) was designed for dark theme not all icons will look good in light theme.  
+You can also chnage the theme by clicking on the left most icon in the tool bar. Since the original version of the app (15 years ago) was designed for dark theme not all icons will look good in light theme.  
 
 ## Screenshots
 ![alt text](/screenshots/login.jpg "Login screen")
@@ -34,26 +34,28 @@ You can also yhnage the theme by clicking on the left most icon in the tool bar.
 
 ### Precompiled binaries
 #### Linux (64 Bit)
-[Tar file](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.2.6/PasswordSafe.tar.xz)  
-[Standalone binary](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.2.6/passwordsafe)  
+[Tar file](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.2/PasswordSafe.tar.xz)  
+[Standalone binary](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.2/passwordsafe)  
 #### Windows (64 Bit)
-[Standalone exe](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.2.6/PasswordSafe.exe)  
+[Standalone exe](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.2/PasswordSafe.exe)  
 #### Mac
 Not available - it could be build but requires Mac + SDK.
 #### Android 
-[APK](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.2.6/PasswordSafe.apk)  
+[APK](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.2/PasswordSafe.apk)  
 
 ## Q & A
 Q: Where is the database stored ?  
 >A: Use the Info dialog :-)  
 On Linux it will be located at  
-~/.config/fyne/com.bytemystery.passwordsafe2/passwordsafe.db
+~/.config/fyne/com.bytemystery.passwordsafe2/passwordsafe.db  
 On Windows they are under  
-C:\Users\<USERNAME>>\AppData\Roaming\fyne\com.bytemystery.passwordsafe\passwordsafe.db
+C:\Users\<USERNAME>>\AppData\Roaming\fyne\com.bytemystery.passwordsafe\passwordsafe.db  
 On Android open the Info dialog at the bottom the path is shown.  
 Q: I have forgotten my password ?  
 >A: Bad luck ..... nobody can help you. Try to remember !!!
 
+## Statistics
+The project consists of round about 3300 lines of go code.  
 
 ## Links
 [Readme](https://bytemystery-com.github.io/passwordsafe/)  

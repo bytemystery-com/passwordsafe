@@ -55,10 +55,9 @@ import (
 )
 
 type GUI struct {
-	App        fyne.App
-	MainWindow fyne.Window
-	Toolbar    *widget.Toolbar
-	//	MainMenu      *fyne.MainMenu
+	App           fyne.App
+	MainWindow    fyne.Window
+	Toolbar       *widget.Toolbar
 	MenuItems     map[string]*fyne.MenuItem
 	IsDesktop     bool
 	Icon          *fyne.StaticResource
@@ -150,8 +149,7 @@ func forceLanguage() {
 }
 
 type FlagsType struct {
-	restarted *bool
-	language  *string
+	language *string
 }
 
 var Flags FlagsType
@@ -360,7 +358,6 @@ func DoLogin(pass []byte) {
 	}
 	crypt.ErasePassword(k)
 	MasterPasswort = pass
-	// go ExportToJson()
 	// err = Database.ConverToJson(MasterPasswort, Crypt)
 	switch Gui.logInMode {
 	case LOGIN_CHANGE_PASSWORD:
