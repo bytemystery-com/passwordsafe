@@ -1,7 +1,7 @@
 ![alt text](/assets/icons/icon.png "Logo")
 
 # PasswordSafe
-PasswordSafe is an app runnig on Anroid, Linux and Windows. It stores you passords in a SQLite database.
+PasswordSafe is an app runnig on Anroid, Linux and Windows. It stores you passwords in a SQLite database.
 For every entry you give a name (this name is not encrypted and searchable). For every entry you can define fileds (Label and Value) and fill with informations. All this data are stored encrypted.
 For encryption AES-256 in conjunction with agon2 is used. The encryption is done with an random Masterkey which is stored encrypted in the database. For opening the masterkey a user Password is used.
 You can have multiple categories to store entries in it.
