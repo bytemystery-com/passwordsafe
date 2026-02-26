@@ -1,0 +1,14 @@
+Website = "https://github.com/bytemystery-com/passwordsafe"
+
+[Details]
+Icon = "assets/icons/icon.png"
+Name = "PasswordSafe"
+ID = "com.bytemystery.passwordsafe2"
+Version = "0.3.1"
+Build = 100
+
+[LinuxAndBSD]
+GenericName = "PasswordSafe"
+Categories = ["System"]
+Comment = "Store passwords in a safe way"
+Keywords = ["password", "store", "crypt"]
