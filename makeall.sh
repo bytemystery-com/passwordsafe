@@ -146,6 +146,16 @@ for tag in ${TAGS} ; do
         # Android stuff
         echo "Build android ..."
         ANDROID_KEY=~/Dropbox/private/android_key/android_key.txt
+        HAS_ANDROID_KEY=0
+        if [[ -f "${ANDROID_KEY}" ]] ; then
+            dir=$(dirname "${ANDROID_KEY}")
+            ANDROID_KEY_FILE="${dir}"/$(tail -n+4 "${ANDROID_KEY}" | head -n1)
+            ANDROID_KEYSTORE_PASS=$(tail -n+5 "${ANDROID_KEY}" | head -n1)
+            ANDROID_KEY_PASS=$(tail -n+6 "${ANDROID_KEY}" | head -n1)
+            ANDROID_KEY_ALIAS=$(tail -n+7 "${ANDROID_KEY}" | head -n1)
+            HAS_ANDROID_KEY=1
+        fi
+        mkdir -p dist/android
         export ANDROID_HOME=${HOME}/Android
         export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/25.2.9519653
         OLD_PATH=${PATH}
@@ -154,19 +164,26 @@ for tag in ${TAGS} ; do
         export TOOLCHAIN=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64
         export CC_AND=${TOOLCHAIN}/bin/aarch64-linux-android21-clang
         export CXX_AND=${TOOLCHAIN}/bin/aarch64-linux-android21-clang++
-        CGO_ENABLED=1 GOOS=android GOARCH=arm64 CC=${CC_AND} CXX=${CXX_AND} fyne package --os android --release --metadata buildts="${ts}" --tags ${tag}
-        if [[ -f "${ANDROID_KEY}" ]] ; then
-            dir=$(dirname "${ANDROID_KEY}")
-            ANDROID_KEY_FILE="${dir}"/$(tail -n+4 "${ANDROID_KEY}" | head -n1)
-            ANDROID_KEYSTORE_PASS=$(tail -n+5 "${ANDROID_KEY}" | head -n1)
-            ANDROID_KEY_PASS=$(tail -n+6 "${ANDROID_KEY}" | head -n1)
-            ${ANDROID_HOME}/build-tools/33.0.2/apksigner sign --ks "${ANDROID_KEY_FILE}" -ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" PasswordSafe.apk
+        CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne package -os android --release --metadata buildts="${ts}" --tags ${tag}
+        if [[ ${HAS_ANDROID_KEY} -eq 1 ]] ; then
+            ${ANDROID_HOME}/build-tools/33.0.2/apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" PasswordSafe.apk
             rm PasswordSafe.apk.idsig
+            mv PasswordSafe.apk dist/android/PasswordSafe${suffix}.apk
+        fi
+        CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne package -target android/arm64 --release --metadata buildts="${ts}" --tags ${tag}
+        if [[ ${HAS_ANDROID_KEY} -eq 1 ]] ; then
+            ${ANDROID_HOME}/build-tools/33.0.2/apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" PasswordSafe.apk
+            rm PasswordSafe.apk.idsig
+            mv PasswordSafe.apk dist/android/PasswordSafe${suffix}_64.apk
+        fi
+        if [[ ${HAS_ANDROID_KEY} -eq 1 ]] ; then
+            CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne release --target android/arm --keystore "${ANDROID_KEY_FILE}" --keystore-pass "${ANDROID_KEYSTORE_PASS}" --key-pass "${ANDROID_KEY_PASS}" --key-name "${ANDROID_KEY_ALIAS}" --metadata buildts="${ts}" --tags ${tag}
+            mv PasswordSafe.aab dist/android/PasswordSafe${suffix}_32.aab
+            CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne release --target android/arm64 --keystore "${ANDROID_KEY_FILE}" --keystore-pass "${ANDROID_KEYSTORE_PASS}" --key-pass "${ANDROID_KEY_PASS}" --key-name "${ANDROID_KEY_ALIAS}" --metadata buildts="${ts}" --tags ${tag}
+            mv PasswordSafe.aab dist/android/PasswordSafe${suffix}_64.aab
         fi
         PATH=${OLD_PATH}
         TOOLCHAIN=${OLD_TOOLCHAIN}
-        mkdir -p dist/android
-        mv PasswordSafe.apk dist/android/PasswordSafe${suffix}.apk
     fi
 done
 

@@ -41,7 +41,8 @@ You can also chnage the theme by clicking on the left most icon in the tool bar.
 #### Mac
 Not available - it could be build but requires Mac + SDK.
 #### Android 
-[APK](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.2/PasswordSafe.apk)  
+[APK all in one](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.2/PasswordSafe.apk)  
+[APK only 64 bit](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.2/PasswordSafe_64.apk)  
 
 ## Q & A
 Q: Where is the database stored ?  

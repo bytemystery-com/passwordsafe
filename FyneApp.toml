@@ -5,7 +5,7 @@ Icon = "assets/icons/icon.png"
 Name = "PasswordSafe"
 ID = "com.bytemystery.passwordsafe2"
 Version = "0.3.2"
-Build = 103
+Build = 149
 
 [LinuxAndBSD]
 GenericName = "PasswordSafe"
