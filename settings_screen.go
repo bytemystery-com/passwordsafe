@@ -49,6 +49,7 @@ type SettingsView struct {
 	exportMode      *widget.Select
 	viewAfterEdit   *widget.Select
 	viewAfterAdd    *widget.Select
+	checkForUpdates *widget.Check
 }
 
 var _ UpdateToolbarInterface = (*SettingsView)(nil)
@@ -100,6 +101,7 @@ func NewSettingsView() *SettingsView {
 		lang.X("settings.viewmode.categoty", "Catergory"),
 		lang.X("settings.viewmode.view", "View"),
 	}, nil)
+	s.checkForUpdates = widget.NewCheck(lang.X("settings.autocheckupdate", "Automatically check for updates"), nil)
 
 	form := container.New(layout.NewFormLayout(),
 		labelAutoLogOut, s.autoLogOutTime,
@@ -111,6 +113,7 @@ func NewSettingsView() *SettingsView {
 		form.Add(labelExportMode)
 		form.Add(s.exportMode)
 	}
+	form = container.NewVBox(form, s.checkForUpdates)
 	browseBtn := widget.NewButton(lang.X("settings.browse", "Browse"),
 		func() {
 			dia := dialog.NewFileSave(func(writer fyne.URIWriteCloser, err error) {
@@ -177,11 +180,15 @@ func NewSettingsView() *SettingsView {
 
 	exportJsonC := container.NewHBox(exportJson)
 
+	updateCheck := widget.NewButton(lang.X("settings.checkupdate", "Check for update"), func() {
+		CheckForUpdate(false)
+	})
+
 	if Gui.IsDesktop {
 		p := container.NewBorder(labelAutoExportPath, nil, nil, browseBtn, s.autoExportPath)
-		s.content = container.NewVBox(form, p, exportJsonC, layout.NewSpacer(), container.NewHBox(layout.NewSpacer(), cancelC, okC, layout.NewSpacer()))
+		s.content = container.NewVBox(form, p, util.NewVFiller(1), exportJsonC, util.NewVFiller(1), updateCheck, util.NewVFiller(1), layout.NewSpacer(), container.NewHBox(layout.NewSpacer(), cancelC, okC, layout.NewSpacer()))
 	} else {
-		s.content = container.NewVBox(form, exportJsonC, layout.NewSpacer(), container.NewHBox(layout.NewSpacer(), cancelC, okC, layout.NewSpacer()))
+		s.content = container.NewVBox(form, util.NewVFiller(1), exportJsonC, util.NewVFiller(1), updateCheck, layout.NewSpacer(), container.NewHBox(layout.NewSpacer(), cancelC, okC, layout.NewSpacer()))
 	}
 	return &s
 }
@@ -243,6 +250,8 @@ func (s *SettingsView) doSave() {
 	Gui.Settings.ViewModeAfterAdd = s.SelToViewMode(s.viewAfterAdd.SelectedIndex())
 	Gui.Settings.ViewModeAfterEdit = s.SelToViewMode(s.viewAfterEdit.SelectedIndex())
 
+	Gui.Settings.AutoUpdateCheck = s.checkForUpdates.Checked
+
 	Gui.Settings.Store()
 	RestoreBeforeSettings()
 }
@@ -279,6 +288,8 @@ func (s *SettingsView) Init() {
 
 	s.viewAfterAdd.SetSelectedIndex(s.ViewModeToSel(Gui.Settings.ViewModeAfterAdd))
 	s.viewAfterEdit.SetSelectedIndex(s.ViewModeToSel(Gui.Settings.ViewModeAfterEdit))
+
+	s.checkForUpdates.SetChecked(Gui.Settings.AutoUpdateCheck)
 }
 
 func (s *SettingsView) GetContent() *fyne.Container {

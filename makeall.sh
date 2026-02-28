@@ -31,7 +31,9 @@
 # openssl genrsa -out bytemystery_key.pem 4096
 # openssl req -new -x509 -key bytemystery_key.pem -out bytemystery_cert.pem -days 10000 -subj "/C=DE/ST=Bayern/L=Munich/CN=bytemystery.com"
 # openssl pkcs12 -export -out bytemystery.pfx -inkey bytemystery_key.pem -in bytemystery_cert.pem
-# pass mCu
+
+PROGRAM_NAME='PasswordSafe'
+PROGRAM_NAME_LOWER='passwordsafe'
 
 X=$(which osslsigncode)
 if [[ ${X} == "" ]] ; then
@@ -117,29 +119,29 @@ for tag in ${TAGS} ; do
         VER=${VERSION}"."${BUILD}
         sed "s/<VERSION>/${VER}/g" winres.json > winres_act.json
         # go-winres make --in winres_act.json
-        go-winres patch --in winres_act.json --no-backup --delete PasswordSafe.exe
+        go-winres patch --in winres_act.json --no-backup --delete "${PROGRAM_NAME}".exe
         rm winres_act.json
         WINDOWS_KEY=~/Dropbox/private/windows_key/windows_key.txt
         if [[ -f "${WINDOWS_KEY}" ]] ; then
             dir=$(dirname "${WINDOWS_KEY}")
             WIN_PFX="${dir}"/$(tail -n+1 "${WINDOWS_KEY}" | head -n1)
             WIN_PASS=$(tail -n+2 "${WINDOWS_KEY}" | head -n1)
-            osslsigncode sign -pkcs12 "${WIN_PFX}" -pass "${WIN_PASS}" -n "PasswordSafe" -ts http://timestamp.digicert.com -in PasswordSafe.exe -out PasswordSafe_sig.exe
-            rm PasswordSafe.exe
-            mv PasswordSafe_sig.exe PasswordSafe${suffix}.exe
+            osslsigncode sign -pkcs12 "${WIN_PFX}" -pass "${WIN_PASS}" -n ""${PROGRAM_NAME}"" -ts http://timestamp.digicert.com -in "${PROGRAM_NAME}".exe -out "${PROGRAM_NAME}"_sig.exe
+            rm "${PROGRAM_NAME}".exe
+            mv "${PROGRAM_NAME}"_sig.exe "${PROGRAM_NAME}"${suffix}.exe
         fi
         mkdir -p dist/windows
-        mv PasswordSafe${suffix}.exe dist/windows
+        mv "${PROGRAM_NAME}"${suffix}.exe dist/windows
     fi
 
     if [[ ${ONLYLINUX} -eq 1 ]] ; then
         echo "Build linux ..."
-        CGO_ENABLED=1 GOOS=linux GOARCH=amd64 fyne package --release --executable passwordsafe --metadata buildts="${ts}" --tags ${tag}
-        CGO_ENABLED=1 GOOS=linux GOARCH=amd64 fyne build --release --output passwordsafe --metadata buildts="${ts}" --tags ${tag}
+        CGO_ENABLED=1 GOOS=linux GOARCH=amd64 fyne package --release --executable "${PROGRAM_NAME}" --metadata buildts="${ts}" --tags ${tag}
+        CGO_ENABLED=1 GOOS=linux GOARCH=amd64 fyne build --release --output "${PROGRAM_NAME}" --metadata buildts="${ts}" --tags ${tag}
         # go build -ldflags="-s -w" .
         mkdir -p dist/linux
-        sudo mv -f passwordsafe dist/linux/passwordsafe${suffix}
-        mv PasswordSafe.tar.xz dist/linux/PasswordSafe${suffix}.tar.xz
+        sudo mv -f "${PROGRAM_NAME}" dist/linux/"${PROGRAM_NAME}"${suffix}
+        mv "${PROGRAM_NAME}".tar.xz dist/linux/"${PROGRAM_NAME}"${suffix}.tar.xz
     fi
 
     if [[ ${ONLYAND} -eq 1 ]] ; then
@@ -166,21 +168,21 @@ for tag in ${TAGS} ; do
         export CXX_AND=${TOOLCHAIN}/bin/aarch64-linux-android21-clang++
         CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne package -os android --release --metadata buildts="${ts}" --tags ${tag}
         if [[ ${HAS_ANDROID_KEY} -eq 1 ]] ; then
-            ${ANDROID_HOME}/build-tools/33.0.2/apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" PasswordSafe.apk
-            rm PasswordSafe.apk.idsig
-            mv PasswordSafe.apk dist/android/PasswordSafe${suffix}.apk
+            ${ANDROID_HOME}/build-tools/33.0.2/apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" "${PROGRAM_NAME}".apk
+            rm "${PROGRAM_NAME}".apk.idsig
+            mv "${PROGRAM_NAME}".apk dist/android/"${PROGRAM_NAME}"${suffix}.apk
         fi
         CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne package -target android/arm64 --release --metadata buildts="${ts}" --tags ${tag}
         if [[ ${HAS_ANDROID_KEY} -eq 1 ]] ; then
-            ${ANDROID_HOME}/build-tools/33.0.2/apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" PasswordSafe.apk
-            rm PasswordSafe.apk.idsig
-            mv PasswordSafe.apk dist/android/PasswordSafe${suffix}_64.apk
+            ${ANDROID_HOME}/build-tools/33.0.2/apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" "${PROGRAM_NAME}".apk
+            rm "${PROGRAM_NAME}".apk.idsig
+            mv "${PROGRAM_NAME}".apk dist/android/"${PROGRAM_NAME}"${suffix}_64.apk
         fi
         if [[ ${HAS_ANDROID_KEY} -eq 1 ]] ; then
             CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne release --target android/arm --keystore "${ANDROID_KEY_FILE}" --keystore-pass "${ANDROID_KEYSTORE_PASS}" --key-pass "${ANDROID_KEY_PASS}" --key-name "${ANDROID_KEY_ALIAS}" --metadata buildts="${ts}" --tags ${tag}
-            mv PasswordSafe.aab dist/android/PasswordSafe${suffix}_32.aab
+            mv "${PROGRAM_NAME}".aab dist/android/"${PROGRAM_NAME}"${suffix}_32.aab
             CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne release --target android/arm64 --keystore "${ANDROID_KEY_FILE}" --keystore-pass "${ANDROID_KEYSTORE_PASS}" --key-pass "${ANDROID_KEY_PASS}" --key-name "${ANDROID_KEY_ALIAS}" --metadata buildts="${ts}" --tags ${tag}
-            mv PasswordSafe.aab dist/android/PasswordSafe${suffix}_64.aab
+            mv "${PROGRAM_NAME}".aab dist/android/"${PROGRAM_NAME}"${suffix}_64.aab
         fi
         PATH=${OLD_PATH}
         TOOLCHAIN=${OLD_TOOLCHAIN}

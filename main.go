@@ -27,9 +27,11 @@ package main
 import (
 	"embed"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -374,6 +376,9 @@ func DoLogin(pass []byte) {
 			SetCatgeoryView(int64(Gui.Settings.LastCategoryId))
 		}
 	}
+	if Gui.Settings.AutoUpdateCheck {
+		CheckForUpdate(true)
+	}
 }
 
 func DoLock() {
@@ -528,6 +533,13 @@ func doImport() {
 }
 
 func ImportDatabase(fDone func(error)) {
+	thisTs, err := Database.GetLastWrite()
+	if err != nil {
+		if fDone != nil {
+			fDone(err)
+		}
+		return
+	}
 	Database.Close()
 	dia := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
 		if err != nil {
@@ -540,41 +552,100 @@ func ImportDatabase(fDone func(error)) {
 			return
 		}
 		defer reader.Close()
-		f, err := database.GetDBFile("backup")
+
+		newFile, err := database.GetDBFile("new")
 		if err != nil {
 			if fDone != nil {
 				fDone(err)
 			}
 			return
 		}
-		_, err = os.Stat(f)
-		if err == nil {
-			err = os.Remove(f)
+		newDb, err := os.OpenFile(newFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o664)
+		if err != nil {
+			if fDone != nil {
+				fDone(err)
+			}
+			return
+		}
+		_, err = io.Copy(newDb, reader)
+		if err != nil {
+			newDb.Close()
+			if fDone != nil {
+				fDone(err)
+			}
+			return
+		}
+		newDb.Close()
+
+		err = Database.Open(newFile, MasterPasswort, Crypt)
+		if err != nil {
+			if fDone != nil {
+				fDone(err)
+			}
+			return
+		}
+		newTs, err := Database.GetLastWrite()
+		Database.Close()
+		if err != nil {
+			if fDone != nil {
+				fDone(err)
+			}
+			return
+		}
+
+		replaceDb := func() error {
+			backupFile, err := database.GetDBFile("backup")
 			if err != nil {
 				if fDone != nil {
 					fDone(err)
 				}
-				return
+				return err
 			}
+			err = util.RenameFile(Gui.DatabaseFile, backupFile)
+			if err != nil {
+				if fDone != nil {
+					fDone(err)
+				}
+				return err
+			}
+			err = util.RenameFile(newFile, Gui.DatabaseFile)
+			if err != nil {
+				if fDone != nil {
+					fDone(err)
+				}
+				return err
+			}
+			return nil
 		}
-		err = os.Rename(Gui.DatabaseFile, f)
-		if err != nil {
+
+		if newTs.Before(thisTs) {
+			msg := widget.NewLabel(fmt.Sprintf(lang.X("import.isolder.msg", "Imported database is older\n(%s)\nthan actual\n(%s) !\n\nProceed importing nevertheless ?"),
+				util.FormatDateTime(newTs, true), util.FormatDateTime(thisTs, true)))
+			msg.Importance = widget.WarningImportance
+			msg.Wrapping = fyne.TextWrapWord
+			msg.TextStyle = fyne.TextStyle{
+				Bold: true,
+			}
+			msg.Alignment = fyne.TextAlignCenter
+			dia := dialog.NewCustomConfirm(lang.X("import.isolder.title", "Datenbank ist älter"),
+				lang.X("import.import", "Import"), lang.X("cancel", "Cancel"), msg,
+				func(ok bool) {
+					if !ok {
+						return
+					}
+					err = replaceDb()
+					if fDone != nil {
+						fDone(err)
+					}
+				}, Gui.MainWindow)
+			dia.Show()
+			dia.Resize(fyne.NewSize(Gui.MainWindow.Canvas().Size().Width, dia.MinSize().Height))
+
+		} else {
+			err = replaceDb()
 			if fDone != nil {
 				fDone(err)
 			}
-			return
-		}
-		t, err := os.OpenFile(Gui.DatabaseFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o664)
-		if err != nil {
-			if fDone != nil {
-				fDone(err)
-			}
-			return
-		}
-		defer t.Close()
-		_, err = io.Copy(t, reader)
-		if fDone != nil {
-			fDone(err)
 		}
 	}, Gui.MainWindow)
 	dia.SetView(dialog.ListView)
@@ -656,4 +727,68 @@ func ExportToJson(writer fyne.URIWriteCloser, done func(string, error)) (string,
 		}
 		return path, nil
 	}
+}
+
+func CheckForUpdate(notify bool) {
+	if notify {
+		now := time.Now().Unix()
+		if now-Gui.Settings.LastUpdatecheck < int64(Gui.Settings.UpdateCheckInterval)*3600 {
+			return
+		}
+	}
+	go func() {
+		m := Gui.App.Metadata()
+		type Version struct {
+			maj   int
+			min   int
+			patch int
+		}
+		thisVersion := Version{}
+		gitVersion := Version{}
+		web, newVer, err := util.CheckForUpdate()
+		if err != nil {
+			return
+		}
+		n, err := fmt.Sscanf(m.Version, "%d.%d.%d", &thisVersion.maj, &thisVersion.min, &thisVersion.patch)
+		if n != 3 || err != nil {
+			return
+		}
+		n, err = fmt.Sscanf(newVer, "v%d.%d.%d", &gitVersion.maj, &gitVersion.min, &gitVersion.patch)
+		if n != 3 || err != nil {
+			return
+		}
+		if thisVersion.maj < gitVersion.maj || (thisVersion.maj == gitVersion.maj && thisVersion.min < gitVersion.min) ||
+			(thisVersion.maj == gitVersion.maj && thisVersion.min == gitVersion.min && thisVersion.patch < gitVersion.patch) {
+			link, err := url.Parse(web)
+			if err != nil {
+				return
+			}
+			fyne.Do(func() {
+				if notify {
+					SendNotification(lang.X("update.notify.title", "New version"), fmt.Sprintf(lang.X("update.notify.msg", "New version %s is available"), newVer))
+					Gui.Settings.LastUpdatecheck = time.Now().Unix()
+					Gui.Settings.Store()
+				} else {
+					msg := widget.NewHyperlinkWithStyle(fmt.Sprintf(lang.X("update.msg", "A new version %s is available !"), newVer),
+						link, fyne.TextAlignCenter, fyne.TextStyle{
+							Bold: true,
+						})
+					var dia *dialog.CustomDialog
+					ok := widget.NewButton(lang.X("ok", "Ok"), func() {
+						dia.Hide()
+					})
+					dia = dialog.NewCustomWithoutButtons(lang.X("update.title", "Update"),
+						container.NewVBox(msg, util.NewVFiller(2), ok), Gui.MainWindow)
+					dia.Show()
+					dia.Resize(fyne.NewSize(Gui.MainWindow.Canvas().Size().Width, dia.MinSize().Height))
+				}
+			})
+		} else {
+			if !notify {
+				fyne.Do(func() {
+					dialog.ShowInformation(lang.X("update.title", "Update"), lang.X("update.nonew", "You are alread running the latest version."), Gui.MainWindow)
+				})
+			}
+		}
+	}()
 }

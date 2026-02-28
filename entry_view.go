@@ -31,6 +31,7 @@ import (
 	"bytemystery-com/passwordsafe/clicklabel"
 	"bytemystery-com/passwordsafe/database"
 	"bytemystery-com/passwordsafe/entrylayout"
+	"bytemystery-com/passwordsafe/util"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -172,7 +173,7 @@ func (e *EntryView) Update(id int64) {
 		fyne.Do(func() {
 			e.data = d
 			e.name.SetText(d.Name)
-			e.dateTime.SetText(fmt.Sprintf("%s  -  %s", n, e.data.Timestamp.Local().Format("02.01.06 - 15:04")))
+			e.dateTime.SetText(fmt.Sprintf("%s  -  %s", n, util.FormatDateTime(e.data.Timestamp, false)))
 			icon, ok := Gui.IconCollection.GetByKey(e.data.Icon)
 			if !ok {
 				icon = GetDefaultIcon()

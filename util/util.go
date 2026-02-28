@@ -25,10 +25,14 @@
 package util
 
 import (
+	"encoding/json"
+	"fmt"
 	"image/color"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -218,4 +222,49 @@ func WriteFile(file string, data []byte) error {
 
 	// Fallback
 	return os.WriteFile(file, data, 0o664)
+}
+
+func RenameFile(src, target string) error {
+	_, err := os.Stat(target)
+	if err == nil {
+		err = os.Remove(target)
+		if err != nil {
+			return err
+		}
+	}
+	err = os.Rename(src, target)
+	return err
+}
+
+func FormatDateTime(ts time.Time, long bool) string {
+	if long {
+		return ts.In(time.Local).Format("02.01.2006 - 15:04:05")
+	} else {
+		return ts.In(time.Local).Format("02.01.06 - 15:04")
+	}
+}
+
+type GitHubRelease struct {
+	TagName string `json:"tag_name"`
+	HTMLURL string `json:"html_url"`
+}
+
+func CheckForUpdate() (string, string, error) {
+	url := "https://api.github.com/repos/bytemystery-com/passwordsafe/releases/latest"
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return "", "", fmt.Errorf("HTTP %d", resp.StatusCode)
+	}
+
+	var release GitHubRelease
+	err = json.NewDecoder(resp.Body).Decode(&release)
+	if err != nil {
+		return "", "", err
+	}
+	return release.HTMLURL, release.TagName, nil
 }

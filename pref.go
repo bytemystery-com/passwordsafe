@@ -68,30 +68,42 @@ const (
 	PREF_VIEWMODE_AFTER_EDIT_VALUE   = VIEWMODE_VIEW
 	PREF_VIEWMODE_AFTER_ADD_KEY      = "viewafteradd"
 	PREF_VIEWMODE_AFTER_ADD_VALUE    = VIEWMODE_CATEGORY
+	PREF_UPDATE_LAST_CHECK_KEY       = "lastupdatecheck"
+	PREF_UPDATE_LAST_CHECK_VALUE     = 0
+	PREF_UPDATE_CHECK_INTERVAL_KEY   = "updatecheckinterval"
+	PREF_UPDATE_CHECK_INTERVAL_VALUE = 48
+	PREF_UPDATE_CHECK_AUTO_KEY       = "autoupdatecheck"
+	PREF_UPDATE_CHECK_AUTO_VALUE     = true
 )
 
 type Preferences struct {
-	ThemeVariant      int
-	AutoLogOut        int
-	CopyToClipboard   CopyToClipboardType
-	LastCategoryId    int
-	AutoExportPath    string
-	ExportMode        ExportModeType
-	MinPassLength     int
-	ViewModeAfterEdit ViewModeType
-	ViewModeAfterAdd  ViewModeType
+	ThemeVariant        int
+	AutoLogOut          int
+	CopyToClipboard     CopyToClipboardType
+	LastCategoryId      int
+	AutoExportPath      string
+	ExportMode          ExportModeType
+	MinPassLength       int
+	ViewModeAfterEdit   ViewModeType
+	ViewModeAfterAdd    ViewModeType
+	LastUpdatecheck     int64
+	UpdateCheckInterval int
+	AutoUpdateCheck     bool
 }
 
 func NewPreferences() *Preferences {
 	p := &Preferences{
-		ThemeVariant:      Gui.App.Preferences().IntWithFallback(PREF_THEMEVARIANT_KEY, PREF_THEMEVARIANT_VALUE),
-		AutoLogOut:        Gui.App.Preferences().IntWithFallback(PREF_AUTOLOGOUT_KEY, PREF_AUTOLOGOUT_VALUE),
-		CopyToClipboard:   CopyToClipboardType(Gui.App.Preferences().IntWithFallback(PREF_COPYTOCLIPBOARD_KEY, int(PREF_COPYTOCLIPBOARD_VALUE))),
-		LastCategoryId:    Gui.App.Preferences().IntWithFallback(PREF_LASTCATEGORYID_KEY, PREF_LASTCATEGORYID_VALUE),
-		AutoExportPath:    Gui.App.Preferences().StringWithFallback(PREF_AUTOEXPORTPATH_KEY, PREF_AUTOEXPORTPATH_VALUE),
-		ExportMode:        ExportModeType(Gui.App.Preferences().IntWithFallback(PREF_EXPORTMODE_KEY, int(PREF_EXPORMODE_VALUE))),
-		ViewModeAfterEdit: ViewModeType(Gui.App.Preferences().IntWithFallback(PREF_VIEWMODE_AFTER_EDIT_KEY, int(PREF_VIEWMODE_AFTER_EDIT_VALUE))),
-		ViewModeAfterAdd:  ViewModeType(Gui.App.Preferences().IntWithFallback(PREF_VIEWMODE_AFTER_ADD_KEY, int(PREF_VIEWMODE_AFTER_ADD_VALUE))),
+		ThemeVariant:        Gui.App.Preferences().IntWithFallback(PREF_THEMEVARIANT_KEY, PREF_THEMEVARIANT_VALUE),
+		AutoLogOut:          Gui.App.Preferences().IntWithFallback(PREF_AUTOLOGOUT_KEY, PREF_AUTOLOGOUT_VALUE),
+		CopyToClipboard:     CopyToClipboardType(Gui.App.Preferences().IntWithFallback(PREF_COPYTOCLIPBOARD_KEY, int(PREF_COPYTOCLIPBOARD_VALUE))),
+		LastCategoryId:      Gui.App.Preferences().IntWithFallback(PREF_LASTCATEGORYID_KEY, PREF_LASTCATEGORYID_VALUE),
+		AutoExportPath:      Gui.App.Preferences().StringWithFallback(PREF_AUTOEXPORTPATH_KEY, PREF_AUTOEXPORTPATH_VALUE),
+		ExportMode:          ExportModeType(Gui.App.Preferences().IntWithFallback(PREF_EXPORTMODE_KEY, int(PREF_EXPORMODE_VALUE))),
+		ViewModeAfterEdit:   ViewModeType(Gui.App.Preferences().IntWithFallback(PREF_VIEWMODE_AFTER_EDIT_KEY, int(PREF_VIEWMODE_AFTER_EDIT_VALUE))),
+		ViewModeAfterAdd:    ViewModeType(Gui.App.Preferences().IntWithFallback(PREF_VIEWMODE_AFTER_ADD_KEY, int(PREF_VIEWMODE_AFTER_ADD_VALUE))),
+		LastUpdatecheck:     100 * int64(Gui.App.Preferences().IntWithFallback(PREF_UPDATE_LAST_CHECK_KEY, PREF_UPDATE_LAST_CHECK_VALUE)),
+		UpdateCheckInterval: Gui.App.Preferences().IntWithFallback(PREF_UPDATE_CHECK_INTERVAL_KEY, PREF_UPDATE_CHECK_INTERVAL_VALUE),
+		AutoUpdateCheck:     Gui.App.Preferences().BoolWithFallback(PREF_UPDATE_CHECK_AUTO_KEY, PREF_UPDATE_CHECK_AUTO_VALUE),
 	}
 	if Gui.IsDesktop {
 		p.MinPassLength = Gui.App.Preferences().IntWithFallback(PREF_MINPASSLENGTH_KEY, PREF_MINPASSLENGTH_DESKTOP_VALUE)
@@ -112,4 +124,7 @@ func (p *Preferences) Store() {
 	pref.SetInt(PREF_MINPASSLENGTH_KEY, p.MinPassLength)
 	pref.SetInt(PREF_VIEWMODE_AFTER_EDIT_KEY, int(p.ViewModeAfterEdit))
 	pref.SetInt(PREF_VIEWMODE_AFTER_ADD_KEY, int(p.ViewModeAfterAdd))
+	pref.SetInt(PREF_UPDATE_LAST_CHECK_KEY, int(p.LastUpdatecheck/100))
+	pref.SetInt(PREF_UPDATE_CHECK_INTERVAL_KEY, p.UpdateCheckInterval)
+	pref.SetBool(PREF_UPDATE_CHECK_AUTO_KEY, p.AutoUpdateCheck)
 }

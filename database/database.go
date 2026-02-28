@@ -704,3 +704,17 @@ func (d *Db) ExportToJson(pass []byte, crypt *crypt.Crypt) (string, error) {
 	}
 	return string(data), nil
 }
+
+func (d *Db) GetLastWrite() (time.Time, error) {
+	if !d.IsOpen() {
+		return time.Time{}, errors.New("database not open")
+	}
+	r := d.sql.QueryRow(`SELECT MAX(ts) FROM (SELECT ts FROM category UNION ALL SELECT ts FROM entry UNION ALL SELECT ts from crypt)`)
+	var str string
+	err := r.Scan(&str)
+	if err != nil {
+		return time.Time{}, err
+	}
+	t, err := time.Parse("2006-01-02 15:04:05", str)
+	return t, err
+}

@@ -35,9 +35,9 @@ import (
 	"strings"
 
 	"bytemystery-com/passwordsafe/omap"
+	"bytemystery-com/passwordsafe/util"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/cmd/fyne_settings/settings"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/lang"
@@ -106,15 +106,15 @@ func showInfoDialog() {
 	if err == nil {
 		entries = count
 	}
+	lastWriteStr := "---"
+	lastWrite, err := Database.GetLastWrite()
+	if err == nil {
+		lastWriteStr = util.FormatDateTime(lastWrite, true)
+	}
 
-	msg := fmt.Sprintf(lang.X("info.msg", "%s\n\nVersion: %s  \n%sAuthor: Reiner Pröls\n\nGo version: %s\n\nFyne version: %s\nBuild: %s\nThema: %s\nWindow size: %.0fx%.0f\n\nPlatform: %s\nArchitecture: %s\n\n%d Entries in %d categories\n\nDatabase: %s"),
-		n, v, tsStr, vgo, vfyne, build, thema, wSize.Width, wSize.Height, os, arch, entries, categories, Gui.DatabaseFile)
+	msg := fmt.Sprintf(lang.X("info.msg", "%s\n\nVersion: %s  \n%sAuthor: Reiner Pröls\n\nGo version: %s\n\nFyne version: %s\nBuild: %s\nThema: %s\nWindow size: %.0fx%.0f\n\nPlatform: %s\nArchitecture: %s\n\n%d Entries in %d categories\n\nDatabase: %s\nModified: %s"),
+		n, v, tsStr, vgo, vfyne, build, thema, wSize.Width, wSize.Height, os, arch, entries, categories, Gui.DatabaseFile, lastWriteStr)
 	dialog.ShowInformation(lang.X("info.title", "Info"), msg, Gui.MainWindow)
-}
-
-func showAppearanceDialog() {
-	appearance := settings.NewSettings().LoadAppearanceScreen(Gui.MainWindow)
-	dialog.ShowCustom(lang.X("caption.fyne.appearance", "Fyne theme settings"), lang.X("ok", "Ok"), appearance, Gui.MainWindow)
 }
 
 func loadPreferences() {

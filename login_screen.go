@@ -81,7 +81,7 @@ func (l *LoginView) doLogIn() {
 		if len(l.pass1.Text) < Gui.Settings.MinPassLength {
 			UIErrorHandler(fmt.Errorf(lang.X("changepasswd.tooshort", "The passwort is too short !\nAt least it should be %d characters long !"), Gui.Settings.MinPassLength))
 		} else if l.pass1.Text != l.pass2.Text {
-			UIErrorHandler(errors.New(lang.X("changepasswd.notequal", "The both passwords are not equal")))
+			UIErrorHandler(errors.New(lang.X("changepasswd.notequal", "The both passwords are not equal !")))
 		} else {
 			DoChangePasswd([]byte(l.pass1.Text))
 		}
