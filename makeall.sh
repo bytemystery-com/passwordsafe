@@ -35,6 +35,8 @@
 PROGRAM_NAME='PasswordSafe'
 PROGRAM_NAME_LOWER='passwordsafe'
 
+export PATH=${PATH}:~/go/bin
+
 X=$(which osslsigncode)
 if [[ ${X} == "" ]] ; then
     echo -e "osslsigncode must be installed\nsudo apt install osslsigncode"
@@ -159,22 +161,22 @@ for tag in ${TAGS} ; do
         fi
         mkdir -p dist/android
         export ANDROID_HOME=${HOME}/Android
-        export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/25.2.9519653
+        export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/latest
         OLD_PATH=${PATH}
         OLD_TOOLCHAIN=${TOOLCHAIN}
-        export PATH=$PATH:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/cmdline-tools/latest/bin
+        export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/build-tools/latest
         export TOOLCHAIN=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64
         export CC_AND=${TOOLCHAIN}/bin/aarch64-linux-android21-clang
         export CXX_AND=${TOOLCHAIN}/bin/aarch64-linux-android21-clang++
         CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne package -os android --release --metadata buildts="${ts}" --tags ${tag}
         if [[ ${HAS_ANDROID_KEY} -eq 1 ]] ; then
-            ${ANDROID_HOME}/build-tools/33.0.2/apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" "${PROGRAM_NAME}".apk
+            apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" "${PROGRAM_NAME}".apk
             rm "${PROGRAM_NAME}".apk.idsig
             mv "${PROGRAM_NAME}".apk dist/android/"${PROGRAM_NAME}"${suffix}.apk
         fi
         CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne package -target android/arm64 --release --metadata buildts="${ts}" --tags ${tag}
         if [[ ${HAS_ANDROID_KEY} -eq 1 ]] ; then
-            ${ANDROID_HOME}/build-tools/33.0.2/apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" "${PROGRAM_NAME}".apk
+            apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" "${PROGRAM_NAME}".apk
             rm "${PROGRAM_NAME}".apk.idsig
             mv "${PROGRAM_NAME}".apk dist/android/"${PROGRAM_NAME}"${suffix}_64.apk
         fi
