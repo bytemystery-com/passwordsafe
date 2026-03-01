@@ -42,7 +42,7 @@
   "info.build_standard": "Standard",
   "info.build_unknown": "Unbekannt",
   "info.msg": "%s\n\nVersion: %s  \n%sAutor: Reiner Pröls\n\nGo version: %s\n\nFyne version: %s\nBuild: %s\nThema: %s\nFenstergröße: %.0fx%.0f\n\nPlatform: %s\nArchitecture: %s\n\n%d Einträge in %d Kategorien\n\nDatenbank: %s\nGeändert: %s",
-  "info.thema_dark": "Dunhel",
+  "info.thema_dark": "Dunkel",
   "info.thema_light": "Hell",
   "info.thema_unknown": "Unbekannt",
   "info.title": "Info",

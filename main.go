@@ -43,6 +43,8 @@ import (
 	"bytemystery-com/passwordsafe/passsafetheme"
 	"bytemystery-com/passwordsafe/util"
 
+	_ "net/http/pprof"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
@@ -60,7 +62,6 @@ type GUI struct {
 	App           fyne.App
 	MainWindow    fyne.Window
 	Toolbar       *widget.Toolbar
-	MenuItems     map[string]*fyne.MenuItem
 	IsDesktop     bool
 	Icon          *fyne.StaticResource
 	FyneSettings  fyne.Settings
@@ -168,7 +169,8 @@ func main() {
 	loadTranslations(assets, "assets/lang")
 	forceLanguage()
 
-	//  go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
+	// go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
+	// top
 	go func() {
 		http.ListenAndServe("localhost:6060", nil)
 	}()

@@ -163,31 +163,26 @@ for tag in ${TAGS} ; do
         export ANDROID_HOME=${HOME}/Android
         export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/latest
         OLD_PATH=${PATH}
-        OLD_TOOLCHAIN=${TOOLCHAIN}
         export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/build-tools/latest
-        export TOOLCHAIN=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64
-        export CC_AND=${TOOLCHAIN}/bin/aarch64-linux-android21-clang
-        export CXX_AND=${TOOLCHAIN}/bin/aarch64-linux-android21-clang++
-        CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne package -os android --release --metadata buildts="${ts}" --tags ${tag}
+        fyne package -os android --release --metadata buildts="${ts}" --tags ${tag}
         if [[ ${HAS_ANDROID_KEY} -eq 1 ]] ; then
             apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" "${PROGRAM_NAME}".apk
             rm "${PROGRAM_NAME}".apk.idsig
             mv "${PROGRAM_NAME}".apk dist/android/"${PROGRAM_NAME}"${suffix}.apk
         fi
-        CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne package -target android/arm64 --release --metadata buildts="${ts}" --tags ${tag}
+        fyne package -target android/arm64 --release --metadata buildts="${ts}" --tags ${tag}
         if [[ ${HAS_ANDROID_KEY} -eq 1 ]] ; then
             apksigner sign --ks "${ANDROID_KEY_FILE}" --ks-key-alias "${ANDROID_KEY_ALIAS}" --ks-pass "pass:${ANDROID_KEYSTORE_PASS}" --key-pass "pass:${ANDROID_KEY_PASS}" "${PROGRAM_NAME}".apk
             rm "${PROGRAM_NAME}".apk.idsig
             mv "${PROGRAM_NAME}".apk dist/android/"${PROGRAM_NAME}"${suffix}_64.apk
         fi
         if [[ ${HAS_ANDROID_KEY} -eq 1 ]] ; then
-            CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne release --target android/arm --keystore "${ANDROID_KEY_FILE}" --keystore-pass "${ANDROID_KEYSTORE_PASS}" --key-pass "${ANDROID_KEY_PASS}" --key-name "${ANDROID_KEY_ALIAS}" --metadata buildts="${ts}" --tags ${tag}
+            fyne release --target android/arm --keystore "${ANDROID_KEY_FILE}" --keystore-pass "${ANDROID_KEYSTORE_PASS}" --key-pass "${ANDROID_KEY_PASS}" --key-name "${ANDROID_KEY_ALIAS}" --metadata buildts="${ts}" --tags ${tag}
             mv "${PROGRAM_NAME}".aab dist/android/"${PROGRAM_NAME}"${suffix}_32.aab
-            CGO_ENABLED=1 GOOS=android CC=${CC_AND} CXX=${CXX_AND} fyne release --target android/arm64 --keystore "${ANDROID_KEY_FILE}" --keystore-pass "${ANDROID_KEYSTORE_PASS}" --key-pass "${ANDROID_KEY_PASS}" --key-name "${ANDROID_KEY_ALIAS}" --metadata buildts="${ts}" --tags ${tag}
+            fyne release --target android/arm64 --keystore "${ANDROID_KEY_FILE}" --keystore-pass "${ANDROID_KEYSTORE_PASS}" --key-pass "${ANDROID_KEY_PASS}" --key-name "${ANDROID_KEY_ALIAS}" --metadata buildts="${ts}" --tags ${tag}
             mv "${PROGRAM_NAME}".aab dist/android/"${PROGRAM_NAME}"${suffix}_64.aab
         fi
         PATH=${OLD_PATH}
-        TOOLCHAIN=${OLD_TOOLCHAIN}
     fi
 done
 
