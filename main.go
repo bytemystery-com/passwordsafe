@@ -200,7 +200,7 @@ func main() {
 
 	Gui.toolAdd = widget.NewToolbarAction(theme.ContentAddIcon(), func() { Gui.categoryView.Add() })
 	Gui.toolEdit = widget.NewToolbarAction(theme.DocumentCreateIcon(), func() { Gui.categoryView.Edit() })
-	Gui.toolRemove = widget.NewToolbarAction(theme.DeleteIcon(), func() { Gui.categoryView.Edit() })
+	Gui.toolRemove = widget.NewToolbarAction(theme.DeleteIcon(), func() { Gui.categoryView.Delete() })
 	Gui.toolDelEntry = widget.NewToolbarAction(theme.DeleteIcon(), func() { Gui.entryView.DelEntry() })
 
 	Gui.toolChangePasswd = widget.NewToolbarAction(theme.AccountIcon(), func() { doChangePassword() })
