@@ -512,10 +512,14 @@ func ExportDatabase(fDone func(error)) {
 			}, Gui.MainWindow)
 		}
 		dia.SetView(dialog.ListView)
-		fName := path.Base(Gui.DatabaseFile)
-		dia.SetFileName(fName)
-		filter := storage.NewExtensionFileFilter([]string{".db"})
-		dia.SetFilter(filter)
+		if !overwrite {
+			fName := path.Base(Gui.DatabaseFile)
+			dia.SetFileName(fName)
+		}
+		if Gui.IsDesktop {
+			filter := storage.NewExtensionFileFilter([]string{".db"})
+			dia.SetFilter(filter)
+		}
 		dia.Show()
 		si := Gui.MainWindow.Canvas().Size()
 		var windowScale float32 = 1.0
@@ -651,10 +655,10 @@ func ImportDatabase(fDone func(error)) {
 		}
 	}, Gui.MainWindow)
 	dia.SetView(dialog.ListView)
-	fName := path.Base(Gui.DatabaseFile)
-	dia.SetFileName(fName)
-	filter := storage.NewExtensionFileFilter([]string{".db"})
-	dia.SetFilter(filter)
+	if Gui.IsDesktop {
+		filter := storage.NewExtensionFileFilter([]string{".db"})
+		dia.SetFilter(filter)
+	}
 	dia.Show()
 	si := Gui.MainWindow.Canvas().Size()
 	var windowScale float32 = 1.0

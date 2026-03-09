@@ -165,11 +165,11 @@ func (p *PassSafeTheme) GetSpecialSize(s string) float32 {
 	case "icon_select_icon_size":
 		return 64
 	case "login_icon_size":
-		return 150
+		return 128
 	case "login_space_logo_label":
-		return 5
-	case "login_space_field_ok":
 		return 3
+	case "login_space_field_ok":
+		return 1
 	}
 	return 1.0
 }

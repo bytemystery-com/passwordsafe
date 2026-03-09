@@ -251,18 +251,18 @@ func ShowExportTypeDialog(f func(overwrite bool)) {
 			cancel := widget.NewButton(lang.X("cancel", "Cancel"), func() {
 				dia.Hide()
 			})
-			overwrite := widget.NewButton(lang.X("export.overwrite", "Overwrite existing"), func() {
+			overwrite := widget.NewButton(lang.X("export.overwrite", "Overwrite"), func() {
 				dia.Hide()
 				f(true)
 			})
 			overwrite.Importance = widget.HighImportance
-			newFile := widget.NewButton(lang.X("export.new", "New file"), func() {
+			newFile := widget.NewButton(lang.X("export.new", "New"), func() {
 				dia.Hide()
 				f(false)
 			})
 			newFile.Importance = widget.HighImportance
 			c := container.NewHBox(layout.NewSpacer(), cancel, newFile, overwrite, layout.NewSpacer())
-			dia = dialog.NewCustomWithoutButtons(lang.X("export.mode.title", "New file or overwrite existing"), c, Gui.MainWindow)
+			dia = dialog.NewCustomWithoutButtons(lang.X("export.mode.title", "New file or overwrite"), c, Gui.MainWindow)
 			dia.Show()
 			si := Gui.MainWindow.Canvas().Size()
 			var windowScale float32 = 1.0
