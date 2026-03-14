@@ -10,10 +10,10 @@
     "#1": {
       "0409": {
         "identity": {
-          "name": "PasswordSafe",
-          "version": ""
+          "name": "<NAME>",
+          "version": "<VERSION>"
         },
-        "description": "PasswordSafe",
+        "description": "<DESCRIPTION>",
         "minimum-os": "win7",
         "execution-level": "as invoker",
         "ui-access": false,
@@ -40,18 +40,18 @@
         },
         "info": {
           "0409": {
-            "Comments": "Store passwords",
-            "CompanyName": "",
-            "FileDescription": "PasswordSafe",
+            "Comments": "<COMMENT>",
+            "CompanyName": "<COMPANY>",
+            "FileDescription": "<DESCRIPTION>",
             "FileVersion": "<VERSION>",
             "InternalName": "",
-            "LegalCopyright": "",
-            "LegalTrademarks": "",
+            "LegalCopyright": "<COPYRIGHT>",
+            "LegalTrademarks": "<TRADEMARK>",
             "OriginalFilename": "",
-            "PrivateBuild": "",
-            "ProductName": "PasswordSafe",
+            "PrivateBuild": "<BUILD>",
+            "ProductName": "<NAME>",
             "ProductVersion": "<VERSION>",
-            "SpecialBuild": ""
+            "SpecialBuild": "<BUILD>"
           }
         }
       }
