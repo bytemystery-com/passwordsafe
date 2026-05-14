@@ -78,7 +78,7 @@
     "settings.viewmode.categoty": "Catergory",
     "settings.viewmode.view": "View",
     "update.msg": "A new version %s is available !",
-    "update.nonew": "You are alread running the latest version.",
+    "update.nonew": "You are already running the latest version.",
     "update.notify.msg": "New version %s is available",
     "update.notify.title": "New version",
     "update.title": "Update"

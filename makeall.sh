@@ -43,7 +43,7 @@ VER=$(sed -n 's/^Version *= *"\(.*\)"/\1/p' FyneApp.toml)
 BUILD=$(sed -n 's/^Build *= *\([0-9]\+\)/\1/p' FyneApp.toml)
 VERSION=${VER}"."${BUILD}
 NAME=${PROGRAM_NAME}
-DESCRIPTION=" Store passwords in a SQLite database"
+DESCRIPTION="Store passwords in a SQLite database"
 COPYRIGHT="Reiner Pröls, bytemystery.com"
 TRADEMARK="bytemystery.com"
 COMPANY="bytemystery.com"

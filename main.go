@@ -25,6 +25,11 @@
 package main
 
 import (
+	"bytemystery-com/passwordsafe/crypt"
+	"bytemystery-com/passwordsafe/database"
+	"bytemystery-com/passwordsafe/omap"
+	"bytemystery-com/passwordsafe/passsafetheme"
+	"bytemystery-com/passwordsafe/util"
 	"embed"
 	"flag"
 	"fmt"
@@ -36,12 +41,6 @@ import (
 	"path"
 	"path/filepath"
 	"time"
-
-	"bytemystery-com/passwordsafe/crypt"
-	"bytemystery-com/passwordsafe/database"
-	"bytemystery-com/passwordsafe/omap"
-	"bytemystery-com/passwordsafe/passsafetheme"
-	"bytemystery-com/passwordsafe/util"
 
 	_ "net/http/pprof"
 
@@ -792,7 +791,7 @@ func CheckForUpdate(notify bool) {
 		} else {
 			if !notify {
 				fyne.Do(func() {
-					dialog.ShowInformation(lang.X("update.title", "Update"), lang.X("update.nonew", "You are alread running the latest version."), Gui.MainWindow)
+					dialog.ShowInformation(lang.X("update.title", "Update"), lang.X("update.nonew", "You are already running the latest version."), Gui.MainWindow)
 				})
 			}
 		}
