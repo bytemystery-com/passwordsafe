@@ -25,12 +25,8 @@
 package main
 
 import (
-	"bytemystery-com/passwordsafe/crypt"
-	"bytemystery-com/passwordsafe/database"
-	"bytemystery-com/passwordsafe/omap"
-	"bytemystery-com/passwordsafe/passsafetheme"
-	"bytemystery-com/passwordsafe/util"
 	"embed"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -41,6 +37,12 @@ import (
 	"path"
 	"path/filepath"
 	"time"
+
+	"bytemystery-com/passwordsafe/crypt"
+	"bytemystery-com/passwordsafe/database"
+	"bytemystery-com/passwordsafe/omap"
+	"bytemystery-com/passwordsafe/passsafetheme"
+	"bytemystery-com/passwordsafe/util"
 
 	_ "net/http/pprof"
 
@@ -482,6 +484,9 @@ func ExportDatabase(fDone func(error)) {
 					return
 				}
 				if reader == nil {
+					if fDone != nil {
+						fDone(errors.New("Reader == nil"))
+					}
 					return
 				}
 				defer reader.Close()
@@ -489,6 +494,12 @@ func ExportDatabase(fDone func(error)) {
 				if err != nil {
 					if fDone != nil {
 						fDone(err)
+					}
+					return
+				}
+				if writer == nil {
+					if fDone != nil {
+						fDone(errors.New("Writer2 == nil"))
 					}
 					return
 				}
@@ -504,6 +515,11 @@ func ExportDatabase(fDone func(error)) {
 					return
 				}
 				if writer == nil {
+					/*
+						if fDone != nil {
+							fDone(errors.New("Writer1 == nil"))
+						}
+					*/
 					return
 				}
 				defer writer.Close()
@@ -520,9 +536,11 @@ func ExportDatabase(fDone func(error)) {
 			dia.SetFilter(filter)
 		}
 		dia.Show()
-		si := Gui.MainWindow.Canvas().Size()
-		var windowScale float32 = 1.0
-		dia.Resize(fyne.NewSize(si.Width*windowScale, si.Height*windowScale))
+		if Gui.IsDesktop {
+			si := Gui.MainWindow.Canvas().Size()
+			var windowScale float32 = 1.0
+			dia.Resize(fyne.NewSize(si.Width*windowScale, si.Height*windowScale))
+		}
 	})
 }
 
@@ -659,9 +677,11 @@ func ImportDatabase(fDone func(error)) {
 		dia.SetFilter(filter)
 	}
 	dia.Show()
-	si := Gui.MainWindow.Canvas().Size()
-	var windowScale float32 = 1.0
-	dia.Resize(fyne.NewSize(si.Width*windowScale, si.Height*windowScale))
+	if Gui.IsDesktop {
+		si := Gui.MainWindow.Canvas().Size()
+		var windowScale float32 = 1.0
+		dia.Resize(fyne.NewSize(si.Width*windowScale, si.Height*windowScale))
+	}
 }
 
 func toggleTheme() {

@@ -5,10 +5,13 @@ Icon = "assets/icons/icon.png"
 Name = "PasswordSafe"
 ID = "com.bytemystery.passwordsafe2"
 Version = "0.3.7"
-Build = 267
+Build = 309
 
 [LinuxAndBSD]
 GenericName = "PasswordSafe"
 Categories = ["System"]
 Comment = "Store passwords in a safe way"
 Keywords = ["password", "store", "crypt"]
+
+[Migrations]
+fyneDo = true

@@ -132,9 +132,11 @@ func NewSettingsView() *SettingsView {
 			filter := storage.NewExtensionFileFilter([]string{".db"})
 			dia.SetFilter(filter)
 			dia.Show()
-			si := Gui.MainWindow.Canvas().Size()
-			var windowScale float32 = 1.0
-			dia.Resize(fyne.NewSize(si.Width*windowScale, si.Height*windowScale))
+			if Gui.IsDesktop {
+				si := Gui.MainWindow.Canvas().Size()
+				var windowScale float32 = 1.0
+				dia.Resize(fyne.NewSize(si.Width*windowScale, si.Height*windowScale))
+			}
 		})
 	exportJson := widget.NewButton(lang.X("settings.export.json", "Export to JSON"), func() {
 		c := widget.NewLabel(lang.X("settings.export.msg", "Do you really want to export the whole database to unencrypted JSON text file ?"))
