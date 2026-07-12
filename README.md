@@ -34,15 +34,15 @@ You can also chnage the theme by clicking on the left most icon in the tool bar.
 
 ### Precompiled binaries
 #### Linux (64 Bit)
-[Tar file](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.7/PasswordSafe.tar.xz)  
-[Standalone binary](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.7/passwordsafe)  
+[Tar file](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.8/PasswordSafe.tar.xz)  
+[Standalone binary](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.8/passwordsafe)  
 #### Windows (64 Bit)
-[Standalone exe](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.7/PasswordSafe.exe)  
+[Standalone exe](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.8/PasswordSafe.exe)  
 #### Mac
 Not available - it could be build but requires Mac + SDK.
 #### Android 
-[APK all in one](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.7/PasswordSafe.apk)  
-[APK only 64 bit](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.7/PasswordSafe_64.apk)  
+[APK all in one](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.8/PasswordSafe.apk)  
+[APK only 64 bit](https://github.com/bytemystery-com/passwordsafe/releases/download/v0.3.8/PasswordSafe_64.apk)  
 
 ## Q & A
 Q: Where is the database stored ?  
