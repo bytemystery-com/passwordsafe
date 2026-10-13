@@ -90,7 +90,7 @@ shift $(($OPTIND - 1))
 if [[ ${ONLYWIN} -eq 0 && ${ONLYAND} -eq 0 && ${ONLYLINUX} -eq 0 ]] ; then
     go fmt ./...    
     go vet ./... 
-    go get -u ./... # ???   
+   # go get -u ./... # ???   
     go mod tidy
     if [[ ${CLEAN} ]] ; then
         go clean -cache -modcache

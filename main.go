@@ -483,6 +483,7 @@ func ExportDatabase(fDone func(error)) {
 					}
 					return
 				}
+
 				if reader == nil {
 					if fDone != nil {
 						fDone(errors.New("Reader == nil"))
