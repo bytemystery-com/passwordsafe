@@ -3,13 +3,21 @@ module bytemystery-com/passwordsafe
 go 1.26.0
 
 require (
-	github.com/bytemystery-com/colorlabel v0.0.0-00010101000000-000000000000
-	github.com/bytemystery-com/picbutton v1.0.5
+	github.com/bytemystery-com/colorlabel v1.0.17
+	github.com/bytemystery-com/picbutton v1.0.6
 	golang.org/x/crypto v0.58.0
 	modernc.org/sqlite v1.60.1
 )
 
-require github.com/fredbi/uri v1.1.1 // indirect
+require (
+	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
+	github.com/fredbi/uri v1.1.1 // indirect
+	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/tc-hib/go-winres v0.3.3 // indirect
+	github.com/tc-hib/winres v0.2.1 // indirect
+	github.com/urfave/cli/v2 v2.27.7 // indirect
+	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
+)
 
 require (
 	fyne.io/fyne/v2 v2.8.0
@@ -55,4 +63,4 @@ require (
 	modernc.org/memory v1.12.1 // indirect
 )
 
-replace github.com/bytemystery-com/colorlabel => ../colorlabel
+replace fyne.io/fyne/v2 => fyne.io/fyne/v2 v2.8.0
